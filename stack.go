@@ -28,8 +28,8 @@ func (st StackTrace) ToMap() []map[string]string {
 	var arr = make([]map[string]string, 0)
 	for _, e := range st {
 		arr = append(arr, map[string]string{
-			"file": e.fileWithLine,
-			"func": e.funcName,
+			"file": e.FileWithLine,
+			"func": e.FuncName,
 		})
 	}
 	return arr
@@ -37,16 +37,16 @@ func (st StackTrace) ToMap() []map[string]string {
 
 // StackTraceFrame ...
 type StackTraceFrame struct {
-	file,
-	fileWithLine,
-	funcName string
-	line int
+	File,
+	FileWithLine,
+	FuncName string
+	Line int
 }
 
 // Format ...
 func (f *StackTraceFrame) Format(s fmt.State, verb rune) {
 	if verb == 'v' && s.Flag('+') {
-		fmt.Fprintf(s, "\n%s\n\t%s", f.funcName, f.fileWithLine)
+		fmt.Fprintf(s, "\n%s\n\t%s", f.FuncName, f.FileWithLine)
 	}
 }
 
@@ -55,21 +55,21 @@ func Callers() StackTrace {
 	const depth = 32
 	var (
 		pcs [depth]uintptr
-		n = runtime.Callers(3, pcs[:])
-		st = make(StackTrace, n)
+		n   = runtime.Callers(3, pcs[:])
+		st  = make(StackTrace, n)
 	)
 	for i := 0; i < n; i++ {
 		var (
-			pc = pcs[i] -1
-			f = &st[i]
+			pc = pcs[i] - 1
+			f  = &st[i]
 		)
-		f.funcName = "unknown"
-		f.file = "unknown"
-		f.line = 0
+		f.FuncName = "unknown"
+		f.File = "unknown"
+		f.Line = 0
 		if fn := runtime.FuncForPC(pc); fn != nil {
-			f.file, f.line = fn.FileLine(pc)
-			f.fileWithLine = fmt.Sprintf("%s:%d", f.file, f.line)
-			f.funcName = fn.Name()
+			f.File, f.Line = fn.FileLine(pc)
+			f.FileWithLine = fmt.Sprintf("%s:%d", f.File, f.Line)
+			f.FuncName = fn.Name()
 		}
 	}
 	return st

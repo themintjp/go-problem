@@ -3,8 +3,8 @@ package problem
 import (
 	"fmt"
 	"io"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 // Cause ...
@@ -65,22 +65,22 @@ func errorToCauses(err error) Causes {
 		switch {
 		case frm != nil && c != nil && strings.HasPrefix(s, "\t"):
 			add, frm = *frm, new(StackTraceFrame)
-			add.fileWithLine = strings.TrimPrefix(s, "\t")
-			l := strings.Split(add.fileWithLine, ":")
+			add.FileWithLine = strings.TrimPrefix(s, "\t")
+			l := strings.Split(add.FileWithLine, ":")
 			if len(l) > 0 {
-				add.file = l[0]
+				add.File = l[0]
 			}
 			if len(l) > 1 {
-				add.line, _ = strconv.Atoi(l[1])
+				add.Line, _ = strconv.Atoi(l[1])
 			}
 			c.StackTrace = append(c.StackTrace, add)
-		case frm != nil && frm.funcName == "":
-			frm.funcName = s
+		case frm != nil && frm.FuncName == "":
+			frm.FuncName = s
 		default:
 			var msg string
-			if frm != nil && frm.funcName != "" {
-				msg = frm.funcName
-				frm = &StackTraceFrame{funcName: s}
+			if frm != nil && frm.FuncName != "" {
+				msg = frm.FuncName
+				frm = &StackTraceFrame{FuncName: s}
 			} else {
 				msg = s
 				frm = new(StackTraceFrame)
